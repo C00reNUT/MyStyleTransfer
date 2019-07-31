@@ -119,9 +119,14 @@ def run_style_transfer(content_path, style_path, num_iterations, load):
         layer.trainable = False
 
     if load:
-        with open("Best_Image.pkl", 'rb') as fo:
-            object = pickle.load(fo, encoding='bytes')
-            assert len(object) == 1, "there should only be one loaded image"
+        try:
+            with open("Best_Image.pkl", 'rb') as fo:
+                object = pickle.load(fo, encoding='bytes')
+        except:
+            print("You are trying to restore an image that doesn't exist!")
+            quit()
+
+        assert len(object) == 1, "there should only be one loaded image"
         print(np.shape(object))
         output_image = tf.Variable(initial_value =object, dtype = tf.float32)
     else:
@@ -175,7 +180,13 @@ def run_style_transfer(content_path, style_path, num_iterations, load):
     return best_img, best_loss
 
 def main():
-    best_img, best_loss = run_style_transfer(content_path, style_path, 1000, True)
+    num_eval = int(input("How many iterations?"))
+    status = input("restore? (t/f)")
+    if status == 't':
+        bool_status = True
+    else:
+        bool_status = False
+    best_img, best_loss = run_style_transfer(content_path, style_path, num_eval, bool_status)
     img = Image.fromarray(best_img.astype(np.uint8), "RGB")
     img.save("combined.jpg")
 
