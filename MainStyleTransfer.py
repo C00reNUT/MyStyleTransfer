@@ -1,7 +1,8 @@
 #this code is my own (mostly)
+#the only non-original things are processing functions
+
 import numpy as np
 from PIL import Image
-import functools
 import tensorflow as tf
 from tensorflow.python.keras.preprocessing import image as kp_image
 from tensorflow.python.keras import models
@@ -132,7 +133,7 @@ def run_style_transfer(content_path, style_path, num_iterations):
     norm_means = np.array([103.939, 116.779, 123.68]) #this section is not mine
     min_vals = -norm_means
     max_vals = 255 - norm_means
-
+    print("I'm starting!")
     for i in range(num_iterations):
         with tf.GradientTape() as tape:
             all_loss, content_loss_value, style_loss_value = big_loss_function(model, style_features, content_features, output_image)
