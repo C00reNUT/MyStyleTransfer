@@ -176,7 +176,7 @@ def run_style_transfer(content_path,
     init_image = load_and_process_img(content_path)
     init_image = tf.Variable(init_image, dtype=tf.float32)
     # Create our optimizer
-    opt = tf.keras.optimizers.Adam(learning_rate=5, beta1=0.99, epsilon=1e-1)
+    opt = tf.keras.optimizers.Adam(learning_rate=5, beta_1=0.99, epsilon=1e-1)
 
     # For displaying intermediate images
     iter_count = 1
