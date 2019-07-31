@@ -22,6 +22,9 @@ style_layers = ['block1_conv1',
 num_content_layers = len(content_layers)
 num_style_layers = len(style_layers)
 
+STYLE_CONTRIB = 1/num_style_layers
+CONTENT_CONTRIB = 1/num_content_layers
+
 def load_and_process_img(path_to_img): #loads image
     img = Image.open(path_to_img)
 
@@ -48,7 +51,7 @@ def deprocess_img(processed_img): #not my code
     x = np.clip(x, 0, 255).astype('uint8')
     return x
 
-def content(generated_activation, content_activation):
+def content_loss(generated_activation, content_activation):
     return tf.reduce_mean(tf.square(content_activation - generated_activation))
 
 def gram_matrix(layer):
@@ -73,14 +76,32 @@ def load_model(): #this part is not my code
 
     return models.Model(vgg.input, model_outputs)  # creates the model using keras structure
 
-def big_loss_function(content, style, output):
-    pass
+def big_loss_function(model, content, style, output):
+    style_features, image_features, output_features_style, output_features_image = get_all_features(model, content, style, output)
+    content_loss_value = 0
+    style_loss_value = 0
 
-def get_content_and_style_features(model, image, style):
+    assert len(output_features_style) == len(style_features)
+    assert len(output_features_image) == len(image_features)
+
+    for i in range(len(output_features_image)):
+        content_loss_value += content_loss(output_features_image[i], image_features[i])
+
+    for i in range(len(output_features_style)):
+        style_loss_value += style_loss(output_features_style[i], style_features[i])
+
+    big_loss = CONTENT_CONTRIB * content_loss_value + STYLE_CONTRIB * style_loss_value
+
+    return big_loss
+def get_all_features(model, image, style, output): #returns all feature extraction from the models
     image_features = model(image)
     style_outputs = model(style)
+    model_outputs = model(output)
+
+    output_features_style= model_outputs[:num_style_layers]
+    output_features_image = model_outputs[num_style_layers:]
 
     style_features = style_outputs[:num_style_layers]
     image_features = image_features[num_style_layers:] #allright, we have the stuff!
 
-    return style_features, image_features
+    return style_features, image_features, output_features_style, output_features_image
