@@ -112,7 +112,7 @@ def get_style_and_content_features(model, image, style): #returns all feature ex
     return style_features, image_features
 
 
-def run_style_transfer(content_path, style_path, num_iterations, content_weight, style_weight):
+def run_style_transfer(content_path, style_path, num_iterations):
     model = load_model()
     for layer in model.layers:
         layer.trainable = False
@@ -168,3 +168,8 @@ def run_style_transfer(content_path, style_path, num_iterations, content_weight,
     dbfile_ = open("Image_Evolution.pkl", "ab")
     pickle.dump(image_list, dbfile_)
     return best_img, best_loss
+
+def main():
+    best_img, best_loss = run_style_transfer(content_path, style_path, 1000)
+    img = Image.fromarray(best_img.astype(np.uint8), "RGB")
+    img.save("combined.jpg")
