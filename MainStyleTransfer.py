@@ -173,3 +173,6 @@ def main():
     best_img, best_loss = run_style_transfer(content_path, style_path, 1000)
     img = Image.fromarray(best_img.astype(np.uint8), "RGB")
     img.save("combined.jpg")
+
+if __name__ == "__main__":
+    main()
