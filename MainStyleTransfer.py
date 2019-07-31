@@ -113,14 +113,19 @@ def get_style_and_content_features(model, image, style): #returns all feature ex
     return style_features, image_features
 
 
-def run_style_transfer(content_path, style_path, num_iterations):
+def run_style_transfer(content_path, style_path, num_iterations, load):
     model = load_model()
     for layer in model.layers:
         layer.trainable = False
-    image_list = list() #this is running record (for pickle1)
 
-    output_image = tf.Variable(initial_value =load_and_process_img(content_path), dtype = tf.float32)
-
+    if load:
+        with open("Best_Image.pkl", 'rb') as fo:
+            object = pickle.load(fo, encoding='bytes')
+            assert len(object) == 1, "there should only be one loaded image"
+        print(np.shape(object))
+        output_image = tf.Variable(initial_value =object, dtype = tf.float32)
+    else:
+        output_image = tf.Variable(initial_value=load_and_process_img(content_path), dtype=tf.float32)
     content_image = load_and_process_img(content_path)
     style_image = load_and_process_img(style_path)
     style_features, content_features = get_style_and_content_features(model, content_image, style_image)
@@ -151,7 +156,8 @@ def run_style_transfer(content_path, style_path, num_iterations):
             best_img = deprocess_img(output_image.numpy())
 
         if i % int(num_iterations/20) == 0:
-            image_list.append(deprocess_img(output_image.numpy()))
+            img = Image.fromarray(best_img.astype(np.uint8), "RGB")
+            img.save("evolution/" + str(i) + ".jpg") #saves images
             try:
                 os.remove("Best_Image.pkl")
             except:
@@ -166,12 +172,10 @@ def run_style_transfer(content_path, style_path, num_iterations):
               'content loss: {:.4e}, '
               .format(all_loss, style_loss_value, content_loss_value))
 
-    dbfile_ = open("Image_Evolution.pkl", "ab")
-    pickle.dump(image_list, dbfile_)
     return best_img, best_loss
 
 def main():
-    best_img, best_loss = run_style_transfer(content_path, style_path, 1000)
+    best_img, best_loss = run_style_transfer(content_path, style_path, 1000, True)
     img = Image.fromarray(best_img.astype(np.uint8), "RGB")
     img.save("combined.jpg")
 
