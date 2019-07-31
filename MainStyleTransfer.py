@@ -8,7 +8,7 @@ from tensorflow.python.keras import models
 import pickle
 import os
 
-content_path = "./content/test.jpeg"
+content_path = "./content/test.JPG"
 style_path = "./style/test.jpg"
 
 content_layers = ['block5_conv2']
