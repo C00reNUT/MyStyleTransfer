@@ -1,6 +1,5 @@
 #this code is my own (mostly)
 #the only non-original things are processing functions
-
 import numpy as np
 from PIL import Image
 import tensorflow as tf
