@@ -21,8 +21,8 @@ style_layers = ['block1_conv1',
 num_content_layers = len(content_layers)
 num_style_layers = len(style_layers)
 
-STYLE_CONTRIB = 0.1/num_style_layers #feel free to change these values
-CONTENT_CONTRIB = 100/num_content_layers
+STYLE_CONTRIB = 0.01/num_style_layers #feel free to change these values
+CONTENT_CONTRIB = 1000/num_content_layers
 
 def load_and_process_img(path_to_img): #loads image
     img = Image.open(path_to_img)
