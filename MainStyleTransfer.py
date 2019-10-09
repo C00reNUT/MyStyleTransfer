@@ -21,7 +21,7 @@ style_layers = ['block1_conv1',
 num_content_layers = len(content_layers)
 num_style_layers = len(style_layers)
 
-STYLE_CONTRIB = 0.01/num_style_layers #feel free to change these values
+STYLE_CONTRIB = 0.1/num_style_layers #feel free to change these values
 CONTENT_CONTRIB = 1000/num_content_layers
 
 def load_and_process_img(path_to_img): #loads image
@@ -124,8 +124,7 @@ def run_style_transfer(content_path, style_path, num_iterations, load):
         except:
             print("You are trying to restore an image that doesn't exist!")
             quit()
-
-        assert len(object) == 1, "there should only be one loaded image"
+        object = np.reshape(object, (1, 1620, 1080, 3))
         print(np.shape(object))
         output_image = tf.Variable(initial_value =object, dtype = tf.float32)
     else:
@@ -159,7 +158,7 @@ def run_style_transfer(content_path, style_path, num_iterations, load):
             best_loss = all_loss
             best_img = deprocess_img(output_image.numpy())
 
-        if i % int(num_iterations/20) == 0:
+        if i % 25 == 0:
             img = Image.fromarray(best_img.astype(np.uint8), "RGB")
             img.save("evolution/" + str(i) + ".jpg") #saves images
             try:
