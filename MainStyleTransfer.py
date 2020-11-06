@@ -7,9 +7,9 @@ from tensorflow.python.keras.preprocessing import image as kp_image
 from tensorflow.python.keras import models
 import pickle
 import os
-
-content_path = "./content/test.JPG"
-style_path = "./style/test.jpg"
+my_path = os.path.dirname(__file__) + "\\"
+content_path = "./content/whale.png"
+style_path = "./style/palette.jpg"
 
 content_layers = ['block5_conv2']
 
@@ -25,7 +25,7 @@ STYLE_CONTRIB = 0.1/num_style_layers #feel free to change these values
 CONTENT_CONTRIB = 1000/num_content_layers
 
 def load_and_process_img(path_to_img): #loads image
-    img = Image.open(path_to_img)
+    img = Image.open(my_path + path_to_img)
 
     img = kp_image.img_to_array(img)
     img = np.expand_dims(img, axis=0)
@@ -160,7 +160,7 @@ def run_style_transfer(content_path, style_path, num_iterations, load):
 
         if i % 25 == 0:
             img = Image.fromarray(best_img.astype(np.uint8), "RGB")
-            img.save("evolution/" + str(i) + ".jpg") #saves images
+            img.save(my_path + "evolution/" + str(i) + ".jpg") #saves images
             try:
                 os.remove("Best_Image.pkl")
             except:
@@ -186,7 +186,7 @@ def main():
         bool_status = False
     best_img, best_loss = run_style_transfer(content_path, style_path, num_eval, bool_status)
     img = Image.fromarray(best_img.astype(np.uint8), "RGB")
-    img.save("combined.jpg")
+    img.save(my_path + "combined.jpg")
 
 if __name__ == "__main__":
     main()
